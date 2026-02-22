@@ -29,3 +29,27 @@ Ein flexibler digitaler Rezeptplaner auf Basis von Node.js und MongoDB, der die 
 
 5. Server starten:
    `node server.js`
+
+   ## Testen der API
+
+Da dieses Projekt als reine REST-Schnittstelle (API) ohne Frontend umgesetzt wurde, empfehlen wir für den Test ein Tool wie **Thunder Client** (VS Code Erweiterung) oder **Postman**.
+
+### Beispiel-Routen:
+
+**1. Neues Rezept anlegen (POST)**
+* URL: `http://localhost:3000/api/recipes`
+* Body (JSON):
+{
+  "title": "Smoked Pulled Pork",
+  "creatorId": "user123",
+  "ingredients": [
+    { "name": "Schweineschulter", "amount": 2.5, "unit": "kg" }
+  ],
+  "steps": ["Fleisch mit Rub einreiben."],
+  "flexibleAttributes": {
+    "grill_temp_celsius": 110
+  }
+}
+
+**2. Alle Rezepte abrufen (GET)**
+* URL: `http://localhost:3000/api/recipes`
