@@ -70,6 +70,16 @@ Nutzer können die Rezeptdatenbank gezielt nach Begriffen im Titel durchsuchen. 
 * **Beispiel:** `http://localhost:3000/api/recipes?search=pizza`
 * **Erwartetes Ergebnis:** Status 200 und eine JSON-Liste (Array), die nur jene Rezepte enthält, in deren Titel der Suchbegriff vorkommt. Ist der Suchparameter leer oder nicht vorhanden, werden alle Rezepte ausgegeben.
 
+### Filtern nach Kategorien/Tags (US10)
+
+Nutzer können Rezepte nach bestimmten Kategorien (Tags) filtern. Die API durchsucht hierfür die Array-Struktur der NoSQL-Datenbank. Die Suche ist dabei fehlertolerant bezüglich Groß- und Kleinschreibung (case-insensitive). Es ist zudem möglich, nach mehreren Tags gleichzeitig zu filtern, indem diese mit einem Komma getrennt werden.
+
+* **Methode:** `GET`
+* **URL:** `http://localhost:3000/api/recipes?tags={TAG_NAME}`
+* **Beispiele:** * Einzelner Tag: `http://localhost:3000/api/recipes?tags=vegetarisch`
+  * Mehrere Tags: `http://localhost:3000/api/recipes?tags=vegetarisch,scharf`
+* **Erwartetes Ergebnis:** Status 200 und eine JSON-Liste der Rezepte, die die übergebenen Tags (unabhängig von der genauen Schreibweise) in ihrem `tags`-Array enthalten.
+
   ### Rezepte durch Admin löschen (US19)
 
 Um die Plattform moderieren zu können, besitzt der Administrator das Recht, jedes beliebige Rezept zu löschen, unabhängig davon, wer es erstellt hat. Dies dient der Entfernung unpassender Inhalte.

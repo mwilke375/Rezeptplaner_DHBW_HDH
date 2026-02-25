@@ -23,9 +23,16 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const query = {};
+    
     if (req.query.search) {
       query.title = { $regex: req.query.search, $options: 'i' };
     }
+
+    if (req.query.tags) {
+      const tagsArray = req.query.tags.split(',').map(tag => new RegExp('^' + tag.trim() + '$', 'i'));
+      query.tags = { $in: tagsArray };
+    }
+
     const recipes = await Recipe.find(query);
     res.status(200).json(recipes);
   } catch (error) {
