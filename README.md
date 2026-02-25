@@ -61,6 +61,15 @@ Rezept-Creator haben die volle Kontrolle über ihre eigenen Inhalte und können 
 * **Erwartetes Ergebnis:** * Status 200 ("Rezept erfolgreich gelöscht"), wenn der Nutzer der Eigentümer ist.
   * Status 403 ("Zugriff verweigert"), wenn ein anderer Nutzer (ohne Admin-Rechte) versucht, das Rezept zu löschen.
 
+  ### Nach Rezepten suchen (US09)
+
+Nutzer können die Rezeptdatenbank gezielt nach Begriffen im Titel durchsuchen. Die Suche ist fehlertolerant bezüglich Groß- und Kleinschreibung (case-insensitive) und findet auch Teilbegriffe innerhalb eines Titels.
+
+* **Methode:** `GET`
+* **URL:** `http://localhost:3000/api/recipes?search={SUCHBEGRIFF}`
+* **Beispiel:** `http://localhost:3000/api/recipes?search=pizza`
+* **Erwartetes Ergebnis:** Status 200 und eine JSON-Liste (Array), die nur jene Rezepte enthält, in deren Titel der Suchbegriff vorkommt. Ist der Suchparameter leer oder nicht vorhanden, werden alle Rezepte ausgegeben.
+
   ### Rezepte durch Admin löschen (US19)
 
 Um die Plattform moderieren zu können, besitzt der Administrator das Recht, jedes beliebige Rezept zu löschen, unabhängig davon, wer es erstellt hat. Dies dient der Entfernung unpassender Inhalte.
