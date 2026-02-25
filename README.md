@@ -48,6 +48,32 @@ Nutzer mit der Rolle `creator` oder `admin` können neue Rezepte im System anleg
 * **Erwartete Ergebnisse:** * Status 201 ("Created"), wenn die `creatorId` gültig ist. Das Rezept wird in der Datenbank gespeichert.
   * Status 403 ("Zugriff verweigert"), wenn die ID zu einem normalen `koch` gehört oder ungültig ist.
 
+  ### Eigene Rezepte löschen (US04)
+
+Rezept-Creator haben die volle Kontrolle über ihre eigenen Inhalte und können diese unwiderruflich aus der Datenbank entfernen. Das System prüft dabei, ob die anfragende `userId` mit der im Rezept hinterlegten `creatorId` übereinstimmt.
+
+* **Methode:** `DELETE`
+* **URL:** `http://localhost:3000/api/recipes/{REZEPT_ID}`
+* **Body (JSON):**
+{
+  "userId": "ID_DES_ERSTELLERS"
+}
+* **Erwartetes Ergebnis:** * Status 200 ("Rezept erfolgreich gelöscht"), wenn der Nutzer der Eigentümer ist.
+  * Status 403 ("Zugriff verweigert"), wenn ein anderer Nutzer (ohne Admin-Rechte) versucht, das Rezept zu löschen.
+
+  ### Rezepte durch Admin löschen (US19)
+
+Um die Plattform moderieren zu können, besitzt der Administrator das Recht, jedes beliebige Rezept zu löschen, unabhängig davon, wer es erstellt hat. Dies dient der Entfernung unpassender Inhalte.
+
+* **Methode:** `DELETE`
+* **URL:** `http://localhost:3000/api/recipes/{REZEPT_ID}`
+* **Body (JSON):**
+{
+  "userId": "ID_DES_ADMINS"
+}
+* **Erwartetes Ergebnis:** * Status 200 ("Rezept erfolgreich gelöscht"), da die Rolle `admin` jegliche Eigentümer-Prüfung überschreibt.
+  * Status 403 ("Zugriff verweigert"), falls die ID nicht zu einem Admin-Konto gehört.
+
 ### Nutzer verwalten / löschen (US20 - Admin-Funktion)
 
 Um bei Missbrauch eingreifen zu können, können Nutzerprofile unwiderruflich aus der Datenbank gelöscht werden. Aus Sicherheitsgründen ist diese Funktion autorisiert: Es muss die ID eines Administrators im Body der Anfrage mitgesendet werden, um die Rechte zu prüfen.

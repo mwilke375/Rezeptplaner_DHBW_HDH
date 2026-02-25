@@ -35,9 +35,24 @@ router.get('/', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
-    const deletedRecipe = await Recipe.findByIdAndDelete(req.params.id);
-    if (!deletedRecipe) return res.status(404).json({ message: 'Nicht gefunden' });
-    res.status(200).json({ message: 'Rezept erfolgreich gelöscht' });
+    const userId = req.body.userId;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(403).json({ message: 'Benutzer nicht gefunden.' });
+    }
+
+    const recipe = await Recipe.findById(req.params.id);
+    if (!recipe) {
+      return res.status(404).json({ message: 'Rezept nicht gefunden.' });
+    }
+
+    if (user.role === 'admin' || recipe.creatorId === userId) {
+      await Recipe.findByIdAndDelete(req.params.id);
+      return res.status(200).json({ message: 'Rezept erfolgreich gelöscht.' });
+    } else {
+      return res.status(403).json({ message: 'Zugriff verweigert: Nur der Ersteller oder ein Admin darf dieses Rezept löschen.' });
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
