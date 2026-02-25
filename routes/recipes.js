@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Recipe = require('../models/Recipe');
 
-// US01 & US03: Rezept erstellen
 router.post('/', async (req, res) => {
   try {
     const newRecipe = new Recipe(req.body);
@@ -13,7 +12,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-// US09: Rezepte abrufen & Suchen
 router.get('/', async (req, res) => {
   try {
     const query = {};
@@ -27,7 +25,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// US04: Rezept löschen
 router.delete('/:id', async (req, res) => {
   try {
     const deletedRecipe = await Recipe.findByIdAndDelete(req.params.id);
