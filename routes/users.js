@@ -30,9 +30,17 @@ router.post('/login', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
+    const adminId = req.body.adminId;
+    const adminUser = await User.findById(adminId);
+
+    if (!adminUser || adminUser.role !== 'admin') {
+      return res.status(403).json({ message: 'Zugriff verweigert: Nur Admins dürfen Nutzer löschen.' });
+    }
+
     const deletedUser = await User.findByIdAndDelete(req.params.id);
     if (!deletedUser) return res.status(404).json({ message: 'Nutzer nicht gefunden' });
-    res.status(200).json({ message: 'Nutzer erfolgreich gelöscht' });
+    
+    res.status(200).json({ message: 'Nutzer erfolgreich vom Admin gelöscht' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

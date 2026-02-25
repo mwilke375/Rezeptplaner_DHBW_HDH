@@ -23,31 +23,40 @@
 5. Server starten:
    `node server.js`
 
-   ## Testen der API
 
-Da dieses Projekt als reine REST-Schnittstelle (API) ohne Frontend umgesetzt wurde, empfehlen wir für den Test das Tool **Thunder Client** (VS Code Erweiterung).
+### Rezept erstellen (US01)
 
-### Beispiel-Routen:
+Nutzer mit der Rolle `creator` oder `admin` können neue Rezepte im System anlegen. Versucht ein normaler `koch` ein Rezept zu erstellen, wird dies aus Sicherheitsgründen blockiert.
 
-**1. Neues Rezept anlegen (POST)**
-* URL: `http://localhost:3000/api/recipes`
-* Body (JSON):
+* **Voraussetzung:** Es muss vorab ein Nutzer (Creator oder Admin) registriert und dessen `_id` kopiert werden.
+* **Methode:** `POST`
+* **URL:** `http://localhost:3000/api/recipes`
+* **Body (JSON):**
 {
-  "title": "Smoked Pulled Pork",
-  "creatorId": "user123",
+  "title": "Spaghetti Napoli",
+  "creatorId": "HIER_DIE_ID_DES_CREATORS_EINTRAGEN",
   "ingredients": [
-    { "name": "Schweineschulter", "amount": 2.5, "unit": "kg" }
+    { "name": "Nudeln", "amount": 500, "unit": "g" },
+    { "name": "Tomatensoße", "amount": 400, "unit": "ml" }
   ],
-  "steps": ["Fleisch mit Rub einreiben."],
-  "flexibleAttributes": {
-    "grill_temp_celsius": 110
-  }
+  "steps": [
+    "Nudeln kochen.",
+    "Soße erwärmen und mischen."
+  ],
+  "tags": ["Vegetarisch", "Pasta"]
 }
+* **Erwartete Ergebnisse:** * Status 201 ("Created"), wenn die `creatorId` gültig ist. Das Rezept wird in der Datenbank gespeichert.
+  * Status 403 ("Zugriff verweigert"), wenn die ID zu einem normalen `koch` gehört oder ungültig ist.
 
-**2. Alle Rezepte abrufen (GET)**
-* URL: `http://localhost:3000/api/recipes`
+### Nutzer verwalten / löschen (US20 - Admin-Funktion)
 
+Um bei Missbrauch eingreifen zu können, können Nutzerprofile unwiderruflich aus der Datenbank gelöscht werden. Aus Sicherheitsgründen ist diese Funktion autorisiert: Es muss die ID eines Administrators im Body der Anfrage mitgesendet werden, um die Rechte zu prüfen.
 
-vorgefertigte rollen bei scharle oder erstellt er selber
-Aufgstellung nochmal durchschauen
-MONGO download dafür????
+* **Methode:** `DELETE`
+* **URL:** `http://localhost:3000/api/users/{ZIEL_NUTZER_ID_HIER_EINSETZEN}`
+* **Body (JSON):**
+{
+  "adminId": "HIER_DIE_ID_DES_ADMINS_EINTRAGEN"
+}
+* **Erwartetes Ergebnis:** * Status 200 ("Nutzer erfolgreich vom Admin gelöscht"), wenn die Autorisierung erfolgreich war.
+  * Status 403 ("Zugriff verweigert"), falls die mitgesendete ID keinem Admin gehört.

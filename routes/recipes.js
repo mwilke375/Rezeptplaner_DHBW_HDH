@@ -1,9 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const Recipe = require('../models/Recipe');
+const User = require('../models/User');
 
 router.post('/', async (req, res) => {
   try {
+    const creatorId = req.body.creatorId;
+    const user = await User.findById(creatorId);
+
+    if (!user || user.role === 'koch') {
+      return res.status(403).json({ message: 'Zugriff verweigert: Nur Creator oder Admins dürfen Rezepte erstellen.' });
+    }
+
     const newRecipe = new Recipe(req.body);
     const savedRecipe = await newRecipe.save();
     res.status(201).json(savedRecipe);
