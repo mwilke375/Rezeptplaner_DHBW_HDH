@@ -48,6 +48,21 @@ Nutzer mit der Rolle `creator` oder `admin` können neue Rezepte im System anleg
 * **Erwartete Ergebnisse:** * Status 201 ("Created"), wenn die `creatorId` gültig ist. Das Rezept wird in der Datenbank gespeichert.
   * Status 403 ("Zugriff verweigert"), wenn die ID zu einem normalen `koch` gehört oder ungültig ist.
 
+  ### Bestehende Rezepte bearbeiten (US02)
+
+Rezept-Creator und Administratoren können bestehende Rezepte im Nachhinein anpassen und verbessern. Die API stellt sicher, dass das spezifische Dokument in der Datenbank aktualisiert wird, ohne dass sich dessen eindeutige ID (`_id`) ändert. Die Berechtigung wird vor der Änderung geprüft.
+
+* **Methode:** `PUT`
+* **URL:** `http://localhost:3000/api/recipes/{REZEPT_ID}`
+* **Body (JSON):**
+{
+  "userId": "ID_DES_ERSTELLERS_ODER_ADMINS",
+  "title": "Neuer verbesserter Titel",
+  "prepTime": 30
+}
+* **Erwartetes Ergebnis:** * Status 200 und das aktualisierte Rezept-Dokument (mit identischer `_id`), wenn die Berechtigung vorliegt.
+  * Status 403 ("Zugriff verweigert"), wenn ein normaler Nutzer oder ein fremder Creator versucht, das Rezept zu bearbeiten.
+
   ### Eigene Rezepte löschen (US04)
 
 Rezept-Creator haben die volle Kontrolle über ihre eigenen Inhalte und können diese unwiderruflich aus der Datenbank entfernen. Das System prüft dabei, ob die anfragende `userId` mit der im Rezept hinterlegten `creatorId` übereinstimmt.

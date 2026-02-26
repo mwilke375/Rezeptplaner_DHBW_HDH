@@ -6,6 +6,11 @@ const User = require('../models/User');
 router.post('/', async (req, res) => {
   try {
     const creatorId = req.body.creatorId;
+    
+    if (!creatorId) {
+      return res.status(400).json({ message: 'Fehlende creatorId im Body.' });
+    }
+
     const user = await User.findById(creatorId);
 
     if (!user || user.role === 'koch') {
@@ -16,6 +21,9 @@ router.post('/', async (req, res) => {
     const savedRecipe = await newRecipe.save();
     res.status(201).json(savedRecipe);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ message: 'Ungültiges ID-Format.' });
+    }
     res.status(400).json({ error: error.message });
   }
 });
@@ -55,9 +63,14 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const userId = req.body.userId;
+    
+    if (!userId) {
+      return res.status(400).json({ message: 'Fehlende userId im Body.' });
+    }
+
     const user = await User.findById(userId);
 
     if (!user) {
@@ -69,13 +82,57 @@ router.delete('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Rezept nicht gefunden.' });
     }
 
-    if (user.role === 'admin' || recipe.creatorId === userId) {
+    if (user.role === 'admin' || recipe.creatorId.toString() === userId) {
+      const updateData = { ...req.body };
+      delete updateData.userId;
+
+      const updatedRecipe = await Recipe.findByIdAndUpdate(
+        req.params.id,
+        updateData,
+        { new: true }
+      );
+      
+      return res.status(200).json(updatedRecipe);
+    } else {
+      return res.status(403).json({ message: 'Zugriff verweigert: Nur der Ersteller oder ein Admin darf dieses Rezept bearbeiten.' });
+    }
+  } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ message: 'Ungültiges ID-Format.' });
+    }
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const userId = req.body.userId;
+
+    if (!userId) {
+      return res.status(400).json({ message: 'Fehlende userId im Body.' });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(403).json({ message: 'Benutzer nicht gefunden.' });
+    }
+
+    const recipe = await Recipe.findById(req.params.id);
+    if (!recipe) {
+      return res.status(404).json({ message: 'Rezept nicht gefunden.' });
+    }
+
+    if (user.role === 'admin' || recipe.creatorId.toString() === userId) {
       await Recipe.findByIdAndDelete(req.params.id);
       return res.status(200).json({ message: 'Rezept erfolgreich gelöscht.' });
     } else {
       return res.status(403).json({ message: 'Zugriff verweigert: Nur der Ersteller oder ein Admin darf dieses Rezept löschen.' });
     }
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ message: 'Ungültiges ID-Format.' });
+    }
     res.status(500).json({ error: error.message });
   }
 });
