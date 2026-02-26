@@ -33,7 +33,17 @@ router.get('/', async (req, res) => {
       query.tags = { $in: tagsArray };
     }
 
-    const recipes = await Recipe.find(query);
+    if (req.query.sort === 'zeit') {
+      query.prepTime = { $exists: true, $ne: null };
+    }
+
+    let mongooseQuery = Recipe.find(query);
+
+    if (req.query.sort === 'zeit') {
+      mongooseQuery = mongooseQuery.sort({ prepTime: 1 });
+    }
+
+    const recipes = await mongooseQuery;
     res.status(200).json(recipes);
   } catch (error) {
     res.status(500).json({ error: error.message });

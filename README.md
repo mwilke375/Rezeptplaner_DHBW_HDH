@@ -80,6 +80,15 @@ Nutzer können Rezepte nach bestimmten Kategorien (Tags) filtern. Die API durchs
   * Mehrere Tags: `http://localhost:3000/api/recipes?tags=vegetarisch,scharf`
 * **Erwartetes Ergebnis:** Status 200 und eine JSON-Liste der Rezepte, die die übergebenen Tags (unabhängig von der genauen Schreibweise) in ihrem `tags`-Array enthalten.
 
+### Suchergebnisse sortieren (US11)
+
+Nutzer können die angezeigten Rezepte sortieren, um einen besseren Überblick zu erhalten. Wenn nach der Zubereitungszeit sortiert wird, erscheinen die Rezepte mit der kürzesten Zeit zuerst (aufsteigend)[cite: 44]. Die API nutzt hierfür das numerische Feld `prepTime` (Angabe in Minuten). Um das Ergebnis nicht durch Null-Werte zu verfälschen, werden bei aktiver Sortierung automatisch alle Dokumente ausgeblendet, bei denen das Feld `prepTime` fehlt.
+
+* **Methode:** `GET`
+* **URL:** `http://localhost:3000/api/recipes?sort=zeit`
+* **Beispiel (Kombination aus Tag-Filter und Sortierung):** `http://localhost:3000/api/recipes?tags=Vegetarisch&sort=zeit`
+* **Erwartetes Ergebnis:** Status 200 und eine JSON-Liste der Rezepte. Ein Salat (`prepTime`: 10) wird vor einem Auflauf (`prepTime`: 45) gelistet. Rezepte ohne `prepTime` werden im Suchergebnis ignoriert.
+
   ### Rezepte durch Admin löschen (US19)
 
 Um die Plattform moderieren zu können, besitzt der Administrator das Recht, jedes beliebige Rezept zu löschen, unabhängig davon, wer es erstellt hat. Dies dient der Entfernung unpassender Inhalte.
