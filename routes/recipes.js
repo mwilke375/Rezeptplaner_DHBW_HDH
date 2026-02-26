@@ -33,6 +33,11 @@ router.get('/', async (req, res) => {
       query.tags = { $in: tagsArray };
     }
 
+    if (req.query.exclude) {
+      const excludeArray = req.query.exclude.split(',').map(item => new RegExp(item.trim(), 'i'));
+      query['ingredients.name'] = { $nin: excludeArray };
+    }
+
     if (req.query.sort === 'zeit') {
       query.prepTime = { $exists: true, $ne: null };
     }

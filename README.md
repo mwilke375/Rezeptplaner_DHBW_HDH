@@ -89,6 +89,15 @@ Nutzer können die angezeigten Rezepte sortieren, um einen besseren Überblick z
 * **Beispiel (Kombination aus Tag-Filter und Sortierung):** `http://localhost:3000/api/recipes?tags=Vegetarisch&sort=zeit`
 * **Erwartetes Ergebnis:** Status 200 und eine JSON-Liste der Rezepte. Ein Salat (`prepTime`: 10) wird vor einem Auflauf (`prepTime`: 45) gelistet. Rezepte ohne `prepTime` werden im Suchergebnis ignoriert.
 
+### Rezepte nach Zutaten ausschließen / Allergiefilter (US12)
+
+Um die Sicherheit für Nutzer mit Allergien oder Unverträglichkeiten zu gewährleisten, können Rezepte basierend auf ihren Zutaten ausgeschlossen werden. Die API durchsucht hierfür tiefgreifend das verschachtelte `ingredients`-Array. Die Filterung erfolgt case-insensitive und greift auch bei Teilwörtern (z.B. filtert "Nuss" auch "Walnuss" heraus). Es können mehrere Zutaten kommasepariert übergeben werden.
+
+* **Methode:** `GET`
+* **URL:** `http://localhost:3000/api/recipes?exclude={ZUTAT}`
+* **Beispiel (Kombination aus Suche und Ausschluss):** `http://localhost:3000/api/recipes?search=kuchen&exclude=nüsse,milch`
+* **Erwartetes Ergebnis:** Status 200 und eine JSON-Liste der Rezepte. Jedes Rezept, das mindestens eine der ausgeschlossenen Zutaten im Feld `ingredients.name` enthält, wird serverseitig aus der Ergebnisliste entfernt.
+
   ### Rezepte durch Admin löschen (US19)
 
 Um die Plattform moderieren zu können, besitzt der Administrator das Recht, jedes beliebige Rezept zu löschen, unabhängig davon, wer es erstellt hat. Dies dient der Entfernung unpassender Inhalte.
