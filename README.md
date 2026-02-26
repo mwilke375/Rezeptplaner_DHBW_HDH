@@ -63,6 +63,22 @@ Rezept-Creator und Administratoren können bestehende Rezepte im Nachhinein anpa
 * **Erwartetes Ergebnis:** * Status 200 und das aktualisierte Rezept-Dokument (mit identischer `_id`), wenn die Berechtigung vorliegt.
   * Status 403 ("Zugriff verweigert"), wenn ein normaler Nutzer oder ein fremder Creator versucht, das Rezept zu bearbeiten.
 
+### Flexible Felder anlegen (US03)
+
+Um die Vorteile der NoSQL-Datenbank MongoDB optimal zu nutzen, wurde das Rezept-Schema flexibel gestaltet (`strict: false` in Mongoose). Rezept-Creator können dadurch jederzeit völlig neue Datenfelder (wie z. B. "Rauchtemperatur" oder "Backzeit") anlegen, ohne dass dafür die Tabellenstruktur (Schema) der Datenbank angepasst werden muss. 
+
+Die Flexibilität greift bei zwei verschiedenen HTTP-Methoden:
+* **`POST` (Neues Rezept):** Wird verwendet, wenn ein Rezept *neu angelegt* wird und direkt bei der Erstellung individuelle Zusatzfelder enthalten soll (URL: `http://localhost:3000/api/recipes`).
+* **`PUT` (Bestehendes Rezept):** Wird verwendet, wenn ein bereits *in der Datenbank existierendes* Rezept im Nachhinein um neue, bisher nicht vorhandene Felder erweitert wird (URL: `http://localhost:3000/api/recipes/{REZEPT_ID}`).
+
+* **Beispiel Body für PUT (Ergänzung eines bestehenden Rezepts):**
+{
+  "userId": "ID_DES_ERSTELLERS",
+  "backzeit": "12-15 Minuten bei 250 Grad",
+  "ofenEinstellung": "Ober-/Unterhitze"
+}
+* **Erwartetes Ergebnis:** Status 201 (Created bei POST) oder 200 (OK bei PUT). Die Datenbank akzeptiert die neuen, unbekannten Attribute ohne Schema-Fehlermeldung und speichert sie fehlerfrei im Rezept-Dokument ab[cite: 42].
+
   ### Eigene Rezepte löschen (US04)
 
 Rezept-Creator haben die volle Kontrolle über ihre eigenen Inhalte und können diese unwiderruflich aus der Datenbank entfernen. Das System prüft dabei, ob die anfragende `userId` mit der im Rezept hinterlegten `creatorId` übereinstimmt.
