@@ -129,6 +129,15 @@ Um die Sicherheit für Nutzer mit Allergien oder Unverträglichkeiten zu gewähr
 * **Beispiel (Kombination aus Suche und Ausschluss):** `http://localhost:3000/api/recipes?search=kuchen&exclude=nüsse,milch`
 * **Erwartetes Ergebnis:** Status 200 und eine JSON-Liste der Rezepte. Jedes Rezept, das mindestens eine der ausgeschlossenen Zutaten im Feld `ingredients.name` enthält, wird serverseitig aus der Ergebnisliste entfernt.
 
+### Zutatenmengen dynamisch umrechnen (US13)
+
+Nutzer können die Zutatenmengen eines Rezepts dynamisch an eine gewünschte Portionenzahl anpassen, um den Kochalltag zu erleichtern. Hierfür wurde eine dedizierte Einzelabruf-Route (`GET /:id`) implementiert. Wenn der Parameter `?portions=` übergeben wird, berechnet die API serverseitig den Umrechnungsfaktor basierend auf dem Ursprungswert (`portions`) des Rezepts und passt die Mengen (`amount`) im `ingredients`-Array für die Rückgabe an. Das Originaldokument in der Datenbank bleibt dabei unverändert.
+
+* **Methode:** `GET`
+* **URL:** `http://localhost:3000/api/recipes/{REZEPT_ID}?portions={WUNSCH_ANZAHL}`
+* **Beispiel:** `http://localhost:3000/api/recipes/699f474269fdc5298b6592bf?portions=2`
+* **Erwartetes Ergebnis:** Status 200 und das Rezept-Dokument als JSON. Ist das Rezept regulär für 4 Portionen ausgelegt, werden durch den Parameter `?portions=2` alle Mengen in der Ausgabe halbiert.
+
   ### Rezepte durch Admin löschen (US19)
 
 Um die Plattform moderieren zu können, besitzt der Administrator das Recht, jedes beliebige Rezept zu löschen, unabhängig davon, wer es erstellt hat. Dies dient der Entfernung unpassender Inhalte.

@@ -63,6 +63,40 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/:id', async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id).lean();
+    
+    if (!recipe) {
+      return res.status(404).json({ message: 'Rezept nicht gefunden.' });
+    }
+
+    const originalPortions = recipe.portions || 1;
+    const targetPortions = req.query.portions ? parseFloat(req.query.portions) : originalPortions;
+
+    if (targetPortions !== originalPortions && targetPortions > 0) {
+      const factor = targetPortions / originalPortions;
+      
+      if (recipe.ingredients && Array.isArray(recipe.ingredients)) {
+        recipe.ingredients = recipe.ingredients.map(ing => {
+          if (ing.amount) {
+            ing.amount = ing.amount * factor;
+          }
+          return ing;
+        });
+      }
+      recipe.portions = targetPortions;
+    }
+
+    res.status(200).json(recipe);
+  } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ message: 'Ungültiges ID-Format.' });
+    }
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.put('/:id', async (req, res) => {
   try {
     const userId = req.body.userId;
