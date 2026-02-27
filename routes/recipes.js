@@ -28,6 +28,46 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.post('/shopping-list', async (req, res) => {
+  try {
+    const { recipeIds } = req.body;
+    
+    if (!recipeIds || !Array.isArray(recipeIds)) {
+      return res.status(400).json({ message: 'Bitte ein Array mit recipeIds übergeben.' });
+    }
+
+    const recipes = await Recipe.find({ _id: { $in: recipeIds } });
+    const shoppingList = {};
+
+    recipes.forEach(recipe => {
+      if (recipe.ingredients && Array.isArray(recipe.ingredients)) {
+        recipe.ingredients.forEach(ing => {
+          if (ing.name && ing.amount && ing.unit) {
+            const key = `${ing.name.toLowerCase()}_${ing.unit.toLowerCase()}`;
+            if (shoppingList[key]) {
+              shoppingList[key].amount += ing.amount;
+            } else {
+              shoppingList[key] = {
+                name: ing.name,
+                amount: ing.amount,
+                unit: ing.unit
+              };
+            }
+          }
+        });
+      }
+    });
+
+    const finalArray = Object.values(shoppingList);
+    res.status(200).json(finalArray);
+  } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ message: 'Ungültiges ID-Format im Array.' });
+    }
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.get('/', async (req, res) => {
   try {
     const query = {};

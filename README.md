@@ -166,6 +166,18 @@ Um Hauptspeisen mit passenden Beilagen zu verknüpfen, macht sich die API die No
 * **URL:** `http://localhost:3000/api/recipes/{HAUPTSPEISEN_ID}`
 * **Erwartetes Ergebnis:** Status 200. Beim Abruf der Hauptspeise löst Mongoose die IDs im Feld `sideDishes` automatisch auf. Die Beilagen-Dokumente werden direkt als fertige Empfehlung im JSON der Hauptspeise eingeblendet.
 
+### Einkaufsliste generieren (US16)
+
+Nutzer können eine kumulierte Einkaufsliste auf Basis mehrerer ausgewählter Rezepte generieren lassen. Die API nimmt hierfür ein Array an Rezept-IDs entgegen, ruft die entsprechenden Dokumente aus der MongoDB ab und aggregiert die darin enthaltenen Zutaten in Echtzeit. Zutaten mit identischem Namen und gleicher Maßeinheit werden zu einer einzigen Position summiert.
+
+* **Methode:** `POST`
+* **URL:** `http://localhost:3000/api/recipes/shopping-list`
+* **Body (JSON):**
+{
+  "recipeIds": ["ID_1", "ID_2", "ID_3"]
+}
+* **Erwartetes Ergebnis:** Status 200. Ein JSON-Array, das alle extrahierten Zutaten summiert darstellt (z.B. werden "200g Mehl" und "300g Mehl" aus zwei verschiedenen Rezepten sauber zu "500g Mehl" zusammengefasst).
+
   ### Rezepte durch Admin löschen (US19)
 
 Um die Plattform moderieren zu können, besitzt der Administrator das Recht, jedes beliebige Rezept zu löschen, unabhängig davon, wer es erstellt hat. Dies dient der Entfernung unpassender Inhalte.
