@@ -133,6 +133,19 @@ Um die Sicherheit für Nutzer mit Allergien oder Unverträglichkeiten zu gewähr
 
 Nutzer können die Zutatenmengen eines Rezepts dynamisch an eine gewünschte Portionenzahl anpassen, um den Kochalltag zu erleichtern. Hierfür wurde eine dedizierte Einzelabruf-Route (`GET /:id`) implementiert. Wenn der Parameter `?portions=` übergeben wird, berechnet die API serverseitig den Umrechnungsfaktor basierend auf dem Ursprungswert (`portions`) des Rezepts und passt die Mengen (`amount`) im `ingredients`-Array für die Rückgabe an. Das Originaldokument in der Datenbank bleibt dabei unverändert.
 
+### Persönliche Favoriten markieren (US14)
+
+Nutzer können Rezepte als Favoriten markieren, um schnelleren Zugriff darauf zu haben. Da es sich um eine reine Backend-Anwendung handelt, wird der Klick auf ein "Herz-Icon" im Frontend durch einen POST-Request an die Nutzer-Route simuliert. Die Rezept-ID wird daraufhin dauerhaft in einem Array (`favorites`) im Profil-Dokument des jeweiligen Nutzers gespeichert.
+
+* **Methode:** `POST`
+* **URL:** `http://localhost:3000/api/users/favorites`
+* **Body (JSON):**
+{
+  "userId": "ID_DES_NUTZERS",
+  "recipeId": "ID_DES_REZEPTS"
+}
+* **Erwartetes Ergebnis:** Status 200 (OK). Die ID des Rezepts wird in das `favorites`-Array des Nutzers eingefügt. Befindet sich das Rezept bereits in der Liste, wird dies erkannt und eine Duplizierung verhindert.
+
 * **Methode:** `GET`
 * **URL:** `http://localhost:3000/api/recipes/{REZEPT_ID}?portions={WUNSCH_ANZAHL}`
 * **Beispiel:** `http://localhost:3000/api/recipes/699f474269fdc5298b6592bf?portions=2`
