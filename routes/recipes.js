@@ -65,7 +65,7 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    const recipe = await Recipe.findById(req.params.id).lean();
+    const recipe = await Recipe.findById(req.params.id).populate('sideDishes').lean();
     
     if (!recipe) {
       return res.status(404).json({ message: 'Rezept nicht gefunden.' });

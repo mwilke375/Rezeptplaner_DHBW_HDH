@@ -133,10 +133,11 @@ Um die Sicherheit für Nutzer mit Allergien oder Unverträglichkeiten zu gewähr
 
 Nutzer können die Zutatenmengen eines Rezepts dynamisch an eine gewünschte Portionenzahl anpassen, um den Kochalltag zu erleichtern. Hierfür wurde eine dedizierte Einzelabruf-Route (`GET /:id`) implementiert. Wenn der Parameter `?portions=` übergeben wird, berechnet die API serverseitig den Umrechnungsfaktor basierend auf dem Ursprungswert (`portions`) des Rezepts und passt die Mengen (`amount`) im `ingredients`-Array für die Rückgabe an. Das Originaldokument in der Datenbank bleibt dabei unverändert.
 
-### Persönliche Favoriten markieren (US14)
+### Persönliche Favoriten verwalten (US14)
 
-Nutzer können Rezepte als Favoriten markieren, um schnelleren Zugriff darauf zu haben. Da es sich um eine reine Backend-Anwendung handelt, wird der Klick auf ein "Herz-Icon" im Frontend durch einen POST-Request an die Nutzer-Route simuliert. Die Rezept-ID wird daraufhin dauerhaft in einem Array (`favorites`) im Profil-Dokument des jeweiligen Nutzers gespeichert.
+Nutzer (Köche) können Rezepte als Favoriten markieren, um schnelleren Zugriff darauf zu haben. Da die Anwendung als reine Backend-API fungiert, wird der "Klick auf das Herz-Icon" im Frontend durch einen gezielten POST-Request simuliert. Das Abrufen der Favoriten nutzt die `.populate()`-Methode von Mongoose, um die gespeicherten IDs direkt in vollständige Rezept-Dokumente umzuwandeln.
 
+**Rezept als Favorit markieren**
 * **Methode:** `POST`
 * **URL:** `http://localhost:3000/api/users/favorites`
 * **Body (JSON):**
@@ -144,12 +145,26 @@ Nutzer können Rezepte als Favoriten markieren, um schnelleren Zugriff darauf zu
   "userId": "ID_DES_NUTZERS",
   "recipeId": "ID_DES_REZEPTS"
 }
-* **Erwartetes Ergebnis:** Status 200 (OK). Die ID des Rezepts wird in das `favorites`-Array des Nutzers eingefügt. Befindet sich das Rezept bereits in der Liste, wird dies erkannt und eine Duplizierung verhindert.
+* **Erwartetes Ergebnis:** Status 200. Die Rezept-ID wird dauerhaft im Array `favorites` des Nutzer-Dokuments gespeichert. Duplikate werden serverseitig verhindert.
 
+### Rezepte über Referenzen verknüpfen / Beilagen (US15)
+
+Um Hauptspeisen mit passenden Beilagen zu verknüpfen, macht sich die API die NoSQL-Referenzierung zunutze. Das Rezept-Schema wurde dafür um ein Array (`sideDishes`) erweitert. 
+
+**Schritt 1: Beilage mit Hauptspeise verknüpfen**
+* **Methode:** `PUT`
+* **URL:** `http://localhost:3000/api/recipes/{HAUPTSPEISEN_ID}`
+* **Body (JSON):**
+{
+  "userId": "ID_DES_ERSTELLERS",
+  "sideDishes": ["ID_DER_BEILAGE_1", "ID_DER_BEILAGE_2"]
+}
+* **Erwartetes Ergebnis:** Status 200. Die IDs der Beilagen werden im Hauptspeisen-Dokument gespeichert.
+
+**Schritt 2: Hauptspeise inklusive Beilagen-Empfehlung abrufen**
 * **Methode:** `GET`
-* **URL:** `http://localhost:3000/api/recipes/{REZEPT_ID}?portions={WUNSCH_ANZAHL}`
-* **Beispiel:** `http://localhost:3000/api/recipes/699f474269fdc5298b6592bf?portions=2`
-* **Erwartetes Ergebnis:** Status 200 und das Rezept-Dokument als JSON. Ist das Rezept regulär für 4 Portionen ausgelegt, werden durch den Parameter `?portions=2` alle Mengen in der Ausgabe halbiert.
+* **URL:** `http://localhost:3000/api/recipes/{HAUPTSPEISEN_ID}`
+* **Erwartetes Ergebnis:** Status 200. Beim Abruf der Hauptspeise löst Mongoose die IDs im Feld `sideDishes` automatisch auf. Die Beilagen-Dokumente werden direkt als fertige Empfehlung im JSON der Hauptspeise eingeblendet.
 
   ### Rezepte durch Admin löschen (US19)
 

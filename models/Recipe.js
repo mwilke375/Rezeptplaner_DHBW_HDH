@@ -10,7 +10,8 @@ const recipeSchema = new mongoose.Schema({
     unit: String
   }],
   steps: [String],
-  tags: [String]
+  tags: [String],
+  sideDishes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' }]
 }, { strict: false });
 
 module.exports = mongoose.model('Recipe', recipeSchema);
