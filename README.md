@@ -193,6 +193,18 @@ Um auf persönliche Daten zugreifen zu können, können sich Nutzer über die AP
 }
 * **Erwartetes Ergebnis:** Status 200 (OK). Die API liefert ein JSON-Objekt zurück. Dieses enthält neben der Erfolgsmeldung das komplette Nutzerprofil (inklusive der eingebetteten Favoriten im Array `favorites`) sowie das separate Array `ownRecipes` mit allen selbst erstellten Rezept-Dokumenten.
 
+### Zentrale Dashboard-Ansicht / Navigation (US18)
+
+Da diese Anwendung als reine Backend-API (ohne grafische Benutzeroberfläche) konzipiert ist, wird die geforderte "Dashboard-Navigation" über die Bereitstellung der entsprechenden zentralen Endpunkte erfüllt. Wenn das Frontend nach dem erfolgreichen Login das Dashboard lädt, ruft es zunächst die Profil-Route ab, um alle initialen Daten zu rendern. Die im Akzeptanzkriterium geforderten Kernfunktionen sind für das Frontend über folgende dedizierte API-Routen erreichbar:
+
+* **Dashboard laden & Profilansicht:** `GET /api/users/{USER_ID}` (Liefert die Basisdaten, vollständig aufgelöste Favoriten und eigene Rezepte auf einen Schlag).
+* **Navigation zur Suche (Filtern & Finden):**
+  `GET /api/recipes` (Unterstützt Query-Parameter wie `?search=`, `?tags=` oder `?exclude=`).
+* **Navigation zur Erstellung (Neues Rezept):**
+  `POST /api/recipes` (Nimmt den Body des neuen Rezepts entgegen und prüft die Berechtigung anhand der übergebenen `creatorId`).
+
+Mit diesen Endpunkten ist die funktionale Grundlage für ein vollumfängliches, navigierbares Frontend-Dashboard vollständig abgedeckt.
+
   ### Rezepte durch Admin löschen (US19)
 
 Um die Plattform moderieren zu können, besitzt der Administrator das Recht, jedes beliebige Rezept zu löschen, unabhängig davon, wer es erstellt hat. Dies dient der Entfernung unpassender Inhalte.

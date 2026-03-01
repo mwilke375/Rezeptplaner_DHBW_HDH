@@ -63,6 +63,28 @@ router.post('/favorites', async (req, res) => {
   }
 });
 
+router.get('/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).populate('favorites');
+    
+    if (!user) {
+      return res.status(404).json({ message: 'Benutzer nicht gefunden.' });
+    }
+
+    const ownRecipes = await Recipe.find({ creatorId: user._id });
+
+    res.status(200).json({
+      user: user,
+      ownRecipes: ownRecipes
+    });
+  } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ message: 'Ungültiges ID-Format.' });
+    }
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.delete('/:id', async (req, res) => {
   try {
     const adminId = req.body.adminId;
