@@ -72,6 +72,10 @@ router.get('/', async (req, res) => {
   try {
     const query = {};
     
+    if (req.query.creatorId) {
+      query.creatorId = req.query.creatorId;
+    }
+
     if (req.query.search) {
       query.title = { $regex: req.query.search, $options: 'i' };
     }

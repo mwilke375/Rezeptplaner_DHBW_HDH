@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const Recipe = require('../models/Recipe');
 
 router.post('/register', async (req, res) => {
   try {
@@ -16,13 +17,19 @@ router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
     
-    const user = await User.findOne({ username: username });
+    const user = await User.findOne({ username: username }).populate('favorites');
 
     if (!user || user.password !== password) {
       return res.status(401).json({ message: 'Falscher Name oder Passwort' });
     }
 
-    res.status(200).json({ message: 'Erfolgreich eingeloggt', user: user });
+    const ownRecipes = await Recipe.find({ creatorId: user._id });
+
+    res.status(200).json({ 
+      message: 'Erfolgreich eingeloggt', 
+      user: user,
+      ownRecipes: ownRecipes 
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

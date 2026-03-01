@@ -178,6 +178,21 @@ Nutzer können eine kumulierte Einkaufsliste auf Basis mehrerer ausgewählter Re
 }
 * **Erwartetes Ergebnis:** Status 200. Ein JSON-Array, das alle extrahierten Zutaten summiert darstellt (z.B. werden "200g Mehl" und "300g Mehl" aus zwei verschiedenen Rezepten sauber zu "500g Mehl" zusammengefasst).
 
+### Authentifizierung & Persönlicher Bereich (US17)
+
+Um auf persönliche Daten zugreifen zu können, können sich Nutzer über die API authentifizieren. Im Backend wird die Anmeldung über einen POST-Request abgewickelt, der die Zugangsdaten mit der MongoDB abgleicht. Um das Akzeptanzkriterium (Zugriff auf Favoriten & eigene Rezepte) vollständig abzubilden, führt die Login-Route zwei wichtige Datenbank-Operationen durch:
+1. Sie löst mittels `.populate('favorites')` die gespeicherten Favoriten-IDs direkt in vollständige Rezept-Dokumente auf.
+2. Sie führt zeitgleich eine Abfrage (`Recipe.find`) durch, um alle vom Nutzer erstellten Rezepte anhand seiner `_id` (`creatorId`) zu ermitteln.
+
+* **Methode:** `POST`
+* **URL:** `http://localhost:3000/api/users/login`
+* **Body (JSON):**
+{
+  "username": "TestCreator",
+  "password": "123"
+}
+* **Erwartetes Ergebnis:** Status 200 (OK). Die API liefert ein JSON-Objekt zurück. Dieses enthält neben der Erfolgsmeldung das komplette Nutzerprofil (inklusive der eingebetteten Favoriten im Array `favorites`) sowie das separate Array `ownRecipes` mit allen selbst erstellten Rezept-Dokumenten.
+
   ### Rezepte durch Admin löschen (US19)
 
 Um die Plattform moderieren zu können, besitzt der Administrator das Recht, jedes beliebige Rezept zu löschen, unabhängig davon, wer es erstellt hat. Dies dient der Entfernung unpassender Inhalte.
