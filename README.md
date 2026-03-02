@@ -105,6 +105,19 @@ In Dokumenten-basierten NoSQL-Datenbanken wie MongoDB werden zusammengehörige D
 }
 * **Erwartetes Ergebnis:** Status 200. Der Link wird als String direkt in das atomare Rezept-Dokument geschrieben. Ein Join über eine separate Bild-Tabelle entfällt beim Abruf vollständig.
 
+### Reihenfolge von Zubereitungsschritten (US06)
+
+Die API nutzt die nativen Eigenschaften von BSON-Arrays in MongoDB, um die Reihenfolge von Zubereitungsschritten ohne zusätzlichen Aufwand (wie Sortier-Spalten in SQL) zu gewährleisten. Das Feld `steps` im Rezept-Schema ist als Array von Strings (`[String]`) definiert.
+
+* **Methode:** `PUT`
+* **URL:** `http://localhost:3000/api/recipes/{REZEPT_ID}`
+* **Body (JSON):**
+{
+  "userId": "ID_DES_ERSTELLERS",
+  "steps": ["Schritt 3", "Schritt 1", "Schritt 2"]
+}
+* **Erwartetes Ergebnis:** Status 200. Wird das Array der Arbeitsschritte vom Frontend in einer neuen Reihenfolge gesendet, überschreibt Mongoose das bestehende Array. Die neue Sortierung bleibt nativ im Dokument erhalten, sodass das Frontend die Daten direkt iterieren und korrekt formatiert anzeigen kann.
+
   ### Nach Rezepten suchen (US09)
 
 Nutzer können die Rezeptdatenbank gezielt nach Begriffen im Titel durchsuchen. Die Suche ist fehlertolerant bezüglich Groß- und Kleinschreibung (case-insensitive) und findet auch Teilbegriffe innerhalb eines Titels.
