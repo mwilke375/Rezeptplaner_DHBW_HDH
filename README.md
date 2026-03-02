@@ -118,6 +118,35 @@ Die API nutzt die nativen Eigenschaften von BSON-Arrays in MongoDB, um die Reihe
 }
 * **Erwartetes Ergebnis:** Status 200. Wird das Array der Arbeitsschritte vom Frontend in einer neuen Reihenfolge gesendet, überschreibt Mongoose das bestehende Array. Die neue Sortierung bleibt nativ im Dokument erhalten, sodass das Frontend die Daten direkt iterieren und korrekt formatiert anzeigen kann.
 
+### Verschiedene Maßeinheiten parallel nutzen (US07)
+
+Die API nutzt eingebettete Dokumente (Subdocuments) innerhalb eines Arrays, um Rezeptzutaten flexibel und ohne komplexe Relationen (wie in SQL-Tabellen) zu speichern. Das `ingredients`-Array im Rezept-Schema definiert `unit` als einfachen String. Dadurch können verschiedene Einheiten-Typen im selben Dokument problemlos gemischt werden.
+
+* **Methode:** `POST` / `PUT`
+* **URL:** `http://localhost:3000/api/recipes/{REZEPT_ID}`
+* **Body (JSON):**
+{
+  "userId": "ID_DES_ERSTELLERS",
+  "ingredients": [
+    { "name": "Mehl", "amount": 500, "unit": "Gramm" },
+    { "name": "Eier", "amount": 2, "unit": "Stück" }
+  ]
+}
+* **Erwartetes Ergebnis:** Status 200 (OK). Die unterschiedlichen Einheiten werden als Strings an die jeweiligen Zutaten-Objekte gebunden und im atomaren Rezept-Dokument gespeichert. Es sind keine separaten Datenbank-Migrationen oder Lookup-Tabellen für neue Einheiten nötig.
+
+### Bestehende Rezepte um neue Attribute erweitern (US08)
+
+Einer der größten Vorteile von dokumentenbasierten NoSQL-Datenbanken (MongoDB) ist die Schema-Flexibilität. Da jedes Dokument für sich selbst steht, erfordern nachträgliche Erweiterungen von Entitäten keine systemweiten Datenbank-Migrationen (wie z. B. `ALTER TABLE` in SQL). Das Mongoose-Schema für Rezepte wurde mit der Option `{ strict: false }` konfiguriert. 
+
+* **Methode:** `PUT`
+* **URL:** `http://localhost:3000/api/recipes/{REZEPT_ID}`
+* **Body (JSON):**
+{
+  "userId": "ID_DES_ERSTELLERS",
+  "nutriScore": "A"
+}
+* **Erwartetes Ergebnis:** Status 200. Das neue Attribut `nutriScore` wird exklusiv dem adressierten Rezept-Dokument hinzugefügt. Alle bestehenden Rezepte in der Datenbank bleiben von dieser Änderung völlig unberührt und erfordern keine Anpassung, was fehleranfällige und zeitaufwändige Migrationen erspart.
+
   ### Nach Rezepten suchen (US09)
 
 Nutzer können die Rezeptdatenbank gezielt nach Begriffen im Titel durchsuchen. Die Suche ist fehlertolerant bezüglich Groß- und Kleinschreibung (case-insensitive) und findet auch Teilbegriffe innerhalb eines Titels.
