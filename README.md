@@ -92,6 +92,19 @@ Rezept-Creator haben die volle Kontrolle über ihre eigenen Inhalte und können 
 * **Erwartetes Ergebnis:** * Status 200 ("Rezept erfolgreich gelöscht"), wenn der Nutzer der Eigentümer ist.
   * Status 403 ("Zugriff verweigert"), wenn ein anderer Nutzer (ohne Admin-Rechte) versucht, das Rezept zu löschen.
 
+### Bilder/Links direkt einbetten (US05)
+
+In Dokumenten-basierten NoSQL-Datenbanken wie MongoDB werden zusammengehörige Daten bevorzugt in einem einzigen ("atomaren") Dokument gespeichert, anstatt sie wie in relationalen SQL-Datenbanken über externe Tabellen zu verknüpfen. Um Links (z. B. Bilder des Endprodukts) einzubetten, wurde das Rezept-Schema um das Feld `imageLink` erweitert. 
+
+* **Methode:** `PUT` (bei bestehenden) oder `POST` (bei neuen Rezepten)
+* **URL:** `http://localhost:3000/api/recipes/{REZEPT_ID}`
+* **Body (JSON):**
+{
+  "userId": "ID_DES_ERSTELLERS",
+  "imageLink": "https://link-zum-bild.de/bild.jpg"
+}
+* **Erwartetes Ergebnis:** Status 200. Der Link wird als String direkt in das atomare Rezept-Dokument geschrieben. Ein Join über eine separate Bild-Tabelle entfällt beim Abruf vollständig.
+
   ### Nach Rezepten suchen (US09)
 
 Nutzer können die Rezeptdatenbank gezielt nach Begriffen im Titel durchsuchen. Die Suche ist fehlertolerant bezüglich Groß- und Kleinschreibung (case-insensitive) und findet auch Teilbegriffe innerhalb eines Titels.
