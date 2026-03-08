@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Recipe = require('../models/Recipe');
 const User = require('../models/User');
+const ShoppingList = require('../models/ShoppingList');
 
 router.post('/', async (req, res) => {
   try {
@@ -30,10 +31,10 @@ router.post('/', async (req, res) => {
 
 router.post('/shopping-list', async (req, res) => {
   try {
-    const { recipeIds } = req.body;
+    const { recipeIds, userId } = req.body;
     
-    if (!recipeIds || !Array.isArray(recipeIds)) {
-      return res.status(400).json({ message: 'Bitte ein Array mit recipeIds übergeben.' });
+    if (!recipeIds || !Array.isArray(recipeIds) || !userId) {
+      return res.status(400).json({ message: 'Bitte ein Array mit recipeIds und eine userId übergeben.' });
     }
 
     const recipes = await Recipe.find({ _id: { $in: recipeIds } });
@@ -59,10 +60,17 @@ router.post('/shopping-list', async (req, res) => {
     });
 
     const finalArray = Object.values(shoppingList);
-    res.status(200).json(finalArray);
+
+    const newShoppingList = new ShoppingList({
+      userId: userId,
+      items: finalArray
+    });
+
+    const savedList = await newShoppingList.save();
+    res.status(201).json(savedList);
   } catch (error) {
     if (error.name === 'CastError') {
-      return res.status(400).json({ message: 'Ungültiges ID-Format im Array.' });
+      return res.status(400).json({ message: 'Ungültiges ID-Format.' });
     }
     res.status(500).json({ error: error.message });
   }

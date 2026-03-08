@@ -223,7 +223,7 @@ Um Hauptspeisen mit passenden Beilagen zu verknüpfen, macht sich die API die No
 
 ### Einkaufsliste generieren (US16)
 
-Nutzer können eine kumulierte Einkaufsliste auf Basis mehrerer ausgewählter Rezepte generieren lassen. Die API nimmt hierfür ein Array an Rezept-IDs entgegen, ruft die entsprechenden Dokumente aus der MongoDB ab und aggregiert die darin enthaltenen Zutaten in Echtzeit. Zutaten mit identischem Namen und gleicher Maßeinheit werden zu einer einzigen Position summiert.
+Nutzer können eine kumulierte Einkaufsliste auf Basis mehrerer ausgewählter Rezepte generieren lassen. Die API nimmt hierfür ein Array an Rezept-IDs entgegen, ruft die entsprechenden Dokumente aus der MongoDB ab und aggregiert die darin enthaltenen Zutaten in Echtzeit. Zutaten mit identischem Namen und gleicher Maßeinheit werden zu einer einzigen Position summiert. Zur effizienten Datenverwaltung wird jede generierte Liste nach sieben Tagen durch einen Time to Live Index automatisch von der Datenbank gelöscht.
 
 * **Methode:** `POST`
 * **URL:** `http://localhost:3000/api/recipes/shopping-list`
@@ -231,7 +231,7 @@ Nutzer können eine kumulierte Einkaufsliste auf Basis mehrerer ausgewählter Re
 {
   "recipeIds": ["ID_1", "ID_2", "ID_3"]
 }
-* **Erwartetes Ergebnis:** Status 200. Ein JSON-Array, das alle extrahierten Zutaten summiert darstellt (z.B. werden "200g Mehl" und "300g Mehl" aus zwei verschiedenen Rezepten sauber zu "500g Mehl" zusammengefasst).
+* **Erwartetes Ergebnis:** Status 200. Ein JSON-Array, das alle extrahierten Zutaten summiert darstellt (z.B. werden "200g Mehl" und "300g Mehl" aus zwei verschiedenen Rezepten sauber zu "500g Mehl" zusammengefasst), sowie der Zeitstempel für die Löschung nach sieben Tagen.
 
 ### Authentifizierung & Persönlicher Bereich (US17)
 
