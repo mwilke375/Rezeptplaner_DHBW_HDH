@@ -1,5 +1,29 @@
 # Rezeptplaner_DHBW_HDH
 
+### User anlegen
+
+* **Methode:** `POST`
+* **URL:** `http://localhost:3000/api/users`
+* **Body (JSON):**
+{
+  "username": "Koch1",
+  "email": "koch@test.de",
+  "password": "passwort123",
+  "role": "koch"
+}
+{
+  "username": "Creator1",
+  "email": "creator@test.de",
+  "password": "passwort123",
+  "role": "creator"
+}
+{
+  "username": "Admin1",
+  "email": "admin@test.de",
+  "password": "passwort123",
+  "role": "admin"
+}
+
 ### Rezept erstellen (US01)
 
 Nutzer mit der Rolle `creator` oder `admin` können neue Rezepte im System anlegen. Versucht ein normaler `koch` ein Rezept zu erstellen, wird dies aus Sicherheitsgründen blockiert.
@@ -9,17 +33,22 @@ Nutzer mit der Rolle `creator` oder `admin` können neue Rezepte im System anleg
 * **URL:** `http://localhost:3000/api/recipes`
 * **Body (JSON):**
 {
-  "title": "Spaghetti Napoli",
-  "creatorId": "HIER_DIE_ID_DES_CREATORS_EINTRAGEN",
+  "title": "Spaghetti Napoli Originale",
+  "creatorId": "HIER DIE ID DES CREATORS EINTRAGEN",
+  "prepTime": 25,
+  "portions": 4,
   "ingredients": [
-    { "name": "Nudeln", "amount": 500, "unit": "g" },
-    { "name": "Tomatensoße", "amount": 400, "unit": "ml" }
+    { "name": "Spaghetti", "amount": 500, "unit": "Gramm" },
+    { "name": "Tomaten", "amount": 400, "unit": "Milliliter" },
+    { "name": "Knoblauch", "amount": 2, "unit": "Stück" }
   ],
   "steps": [
-    "Nudeln kochen.",
-    "Soße erwärmen und mischen."
+    "Wasser in einem großen Topf zum Kochen bringen",
+    "Die Spaghetti hineingeben und kochen",
+    "Währenddessen die Tomatensoße in einer Pfanne erwärmen",
+    "Die Nudeln abgießen und mit der Soße vermengen"
   ],
-  "tags": ["Vegetarisch", "Pasta"]
+  "tags": ["Vegetarisch", "Pasta", "Hauptspeise"]
 }
 * **Erwartete Ergebnisse:** * Status 201 ("Created"), wenn die `creatorId` gültig ist. Das Rezept wird in der Datenbank gespeichert.
   * Status 403 ("Zugriff verweigert"), wenn die ID zu einem normalen `koch` gehört oder ungültig ist.
@@ -68,7 +97,7 @@ Rezept-Creator haben die volle Kontrolle über ihre eigenen Inhalte und können 
 * **Erwartetes Ergebnis:** * Status 200 ("Rezept erfolgreich gelöscht"), wenn der Nutzer der Eigentümer ist.
   * Status 403 ("Zugriff verweigert"), wenn ein anderer Nutzer (ohne Admin-Rechte) versucht, das Rezept zu löschen.
 
-### Bilder/Links direkt einbetten (US05)
+### Links von Bildern direkt einbetten (US05)
 
 In Dokumenten-basierten NoSQL-Datenbanken wie MongoDB werden zusammengehörige Daten bevorzugt in einem einzigen ("atomaren") Dokument gespeichert, anstatt sie wie in relationalen SQL-Datenbanken über externe Tabellen zu verknüpfen. Um Links (z. B. Bilder des Endprodukts) einzubetten, wurde das Rezept-Schema um das Feld `imageLink` erweitert. 
 

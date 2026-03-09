@@ -2,7 +2,7 @@
 
 ## Voraussetzungen
 * Node.js installiert
-* MongoDB Cluster --> wir empfhelen MongoDB Atlas
+* MongoDB Cluster --> wir empfehlen MongoDB Atlas
 
 ## Installation & Start
 
@@ -20,9 +20,8 @@
    `MONGO_URI=dein_mongodb_connection_string`
    `PORT=3000`
 
-5. Server starten:
-   `node server.js`
+5. Thunder Client installieren (VSC Erweiterung)
+Klicke auf Extensions und suche Thunder Client, dann auf install
 
-6. Inhalt der DB:
-Unsere DB enthält für Tests schon folgende Inhalte:
-Unter Userstories.md finden sie (falls benötigt) eine Beschreibung/ Erklärung zu den einzelnen Userstories. 
+6. Server starten:
+   `node server.js`
