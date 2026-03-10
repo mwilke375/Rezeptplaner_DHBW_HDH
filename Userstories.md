@@ -1,5 +1,8 @@
 # Rezeptplaner_DHBW_HDH
 
+### Hinweis zur Übersicht
+Um die Daten übersichtlich zu visulaisieren empfhelen wir mongoDB compass
+
 ### User anlegen
 
 * **Methode:** `POST`
