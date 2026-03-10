@@ -2,7 +2,7 @@
 
 ## Voraussetzungen
 * Node.js installiert
-* MongoDB Cluster --> wir empfehlen MongoDB Atlas
+* MongoDB Cluster --> z.B. MongoDB Atlas. Bei MongoDB Atlas unter IP access list darauf achten, dass ihre IP-Adresse freigeschaltet ist bzw. einfach  0.0.0.0./0 verwenden.
 
 ## Installation & Start
 
