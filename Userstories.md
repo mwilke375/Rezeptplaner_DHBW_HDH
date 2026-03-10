@@ -3,7 +3,7 @@
 ### User anlegen
 
 * **Methode:** `POST`
-* **URL:** `http://localhost:3000/api/users`
+* **URL:** `http://localhost:3000/api/users/register`
 * **Body (JSON):**
 {
   "username": "Koch1",
