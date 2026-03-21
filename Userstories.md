@@ -238,6 +238,7 @@ Nutzer können eine kumulierte Einkaufsliste auf Basis mehrerer ausgewählter Re
 * **Body (JSON):**
 {
   "recipeIds": ["ID_1", "ID_2", "ID_3"]
+  "userId": "HIER_DIE_ID_DEINES_USERS_EINTRAGEN"
 }
 * **Erwartetes Ergebnis:** Status 200. Ein JSON-Array, das alle extrahierten Zutaten summiert darstellt (z.B. werden "200g Mehl" und "300g Mehl" aus zwei verschiedenen Rezepten sauber zu "500g Mehl" zusammengefasst), sowie der Zeitstempel für die Löschung nach sieben Tagen.
 
@@ -260,11 +261,11 @@ Um auf persönliche Daten zugreifen zu können, können sich Nutzer über die AP
 
 Da diese Anwendung als reine Backend-API (ohne grafische Benutzeroberfläche) konzipiert ist, wird die geforderte "Dashboard-Navigation" über die Bereitstellung der entsprechenden zentralen Endpunkte erfüllt. Wenn das Frontend nach dem erfolgreichen Login das Dashboard lädt, ruft es zunächst die Profil-Route ab, um alle initialen Daten zu rendern. Die im Akzeptanzkriterium geforderten Kernfunktionen sind für das Frontend über folgende dedizierte API-Routen erreichbar:
 
-* **Dashboard laden & Profilansicht:** `GET /api/users/{USER_ID}` (Liefert die Basisdaten, vollständig aufgelöste Favoriten und eigene Rezepte auf einen Schlag).
+* **Dashboard laden & Profilansicht:** `GET http://localhost:3000/api/users/{USER_ID}` (Liefert die Basisdaten, vollständig aufgelöste Favoriten und eigene Rezepte auf einen Schlag).
 * **Navigation zur Suche (Filtern & Finden):**
-  `GET /api/recipes` (Unterstützt Query-Parameter wie `?search=`, `?tags=` oder `?exclude=`).
+  `GET http://localhost:3000/api/recipes` (Unterstützt Query-Parameter wie `?search=`, `?tags=` oder `?exclude=`).
 * **Navigation zur Erstellung (Neues Rezept):**
-  `POST /api/recipes` (Nimmt den Body des neuen Rezepts entgegen und prüft die Berechtigung anhand der übergebenen `creatorId`).
+  `POST http://localhost:3000/api/recipes` (Nimmt den Body des neuen Rezepts entgegen und prüft die Berechtigung anhand der übergebenen `creatorId`).
 
 Mit diesen Endpunkten ist die funktionale Grundlage für ein vollumfängliches, navigierbares Frontend-Dashboard vollständig abgedeckt.
 
