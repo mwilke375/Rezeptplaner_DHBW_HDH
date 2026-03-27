@@ -17,7 +17,7 @@
 
 4. Umgebungsvariablen einrichten:
    Erstelle eine Datei namens `.env` im Hauptverzeichnis und füge folgenden Inhalt ein:
-   `MONGO_URI=dein_mongodb_connection_string`
+   `MONGO_URI=DEIN_MONGODB_CONNECTION_STRING`
    `PORT=3000`
 
 5. Thunder Client installieren (VSC Erweiterung)
@@ -25,3 +25,6 @@ Klicke auf Extensions und suche Thunder Client, dann auf install
 
 6. Server starten:
    `node server.js`
+
+7. Userstories
+In der Userstories.md sind alle Userstories mit Erklärung und Beispiel der Funktion zum testen 
